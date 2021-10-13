@@ -6,7 +6,7 @@ from .models import User
 auth = Blueprint('auth', __name__)
 
 
-@auth.route('/login')
+@auth.route('/login', methods=['GET'])
 def login():
     return render_template('login.html')
 
