@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% for filename in os.listdir(images_folder) %}
+        <div>
+            {{ filename }} <br>
+        </div>
+    {% endfor %}
+
+{% endblock %}

@@ -32,3 +32,10 @@ def upload_file():
         return render_template('profile.html')
 
     return render_template('image_form.html')
+
+
+@main.route('/gallery', methods=['GET'])
+@login_required
+def view_gallery():
+    images_folder = f"{current_app.config.get('UPLOAD_FOLDER')}/{current_user.name}/"
+    return render_template('gallery.html', images_folder=images_folder)

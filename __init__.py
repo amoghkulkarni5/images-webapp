@@ -1,9 +1,11 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
+
 
 def create_app():
     app = Flask(__name__)
@@ -32,5 +34,8 @@ def create_app():
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
-    return app
+    @app.context_processor
+    def handle_context():
+        return dict(os=os)
 
+    return app
