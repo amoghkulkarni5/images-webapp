@@ -32,9 +32,9 @@ Flask-Migrate <br>
 `pip install flask flask-sqlalchemy flask-login`
 
 ### Setting UP DB interactions - 
-sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu bionic main'
-sudo apt update
-sudo apt install -y python-mysqldb
+sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu bionic main' <br>
+sudo apt update <br>
+sudo apt install -y python-mysqldb <br>
 
 ### Running UP DB interactions - 
 Log onto python interpreter one level above project directory (make sure pymsql is there)
