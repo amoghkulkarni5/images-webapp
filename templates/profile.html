@@ -1,7 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="title">
-  Welcome, {{ name }}!
-</h1>
+
+<div class="container is-max-desktop has-text-success-light is-size-1 is-capitalized">
+  Welcome, {{name}}
+</div>
+
+<div class="container is-max-desktop has-text-success-light is-size-5 mb-6 pb-6">
+  What would you like to do?
+</div>
+
+<div class="container is-max-desktop">
+  <div class="notification is-primary">
+    <a href="{{ url_for('main.upload_file') }}" class="button is-outlined is-large is-fullwidth">Upload Image</a>
+  </div>
+</div>
+
+<div class="container is-max-desktop">
+  <div class="notification is-primary">
+    <button class="button is-outlined is-large is-fullwidth">View Gallery</button>
+  </div>
+</div>
+
 {% endblock %}

@@ -5,12 +5,12 @@ from flask_sqlalchemy import SQLAlchemy
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
 
-
 def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://amogh:amogh@localhost/flask_webapp'
     app.secret_key = 'SECRETKEY'
     app.config['SESSION_TYPE'] = 'filesystem'
+    app.config['UPLOAD_FOLDER'] = app.root_path + '/uploads'
     db.init_app(app)
 
     login_manager = LoginManager()

@@ -29,10 +29,13 @@ def login_post():
 
 
 @auth.route('/logout')
+@login_required
 def logout():
+    logout_user()
     return 'Logout'
 
 
-@auth.route('/signup')
-def signup():
-    return render_template('signup.html')
+@auth.route('/add-user')
+def add_user():
+    return render_template('add_user.html')
+

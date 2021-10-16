@@ -30,6 +30,7 @@ Flask Login <br>
 Flask WTF <br>
 flask-sqlalchemy <br>
 mysqlclient
+Flask-Migrate
 
 `pip install flask flask-sqlalchemy flask-login`
 
@@ -42,4 +43,5 @@ sudo apt install -y python-mysqldb
 Log onto python interpreter one level above project directory (make sure pymsql is there)
 `from images_webapp import db, create_app, models`
 `db.create_all(app=create_app())`
+`db.drop_all(app=create_app())`
 
