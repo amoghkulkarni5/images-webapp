@@ -11,26 +11,23 @@ Database String for SQL Alchemy - mysql://username:password@localhost/db_name
 5. Exit and login using `mysql -u amogh -p`
 6. `CREATE DATABASE flask_webapp`
 7. `USE flask_webapp`
-8. `INSERT INTO user(email,password,name) VALUES ('amoghkulkarni5@gmail.com','password','amogh');`
-
-Start python interpreter from one level above project directory
+8. Insert one user with role 'admin' (Feature to be added based on 'admin' role later)
 
 ### Commands -
-cd to project directory
-`source flask_env/bin/activate`
-cd one level up
-`export FLASK_APP=images_webapp`
-`export FLASK_DEBUG=1`
-`export FLASK_ENV=development`
-`flask run`
+Start terminal from one level above project directory <br>
+`source images_webapp/flask_env/bin/activate` <br>
+`export FLASK_APP=images_webapp` <br>
+`export FLASK_DEBUG=1` <br>
+`export FLASK_ENV=development` <br>
+`flask run` <br>
 
 ### Libraries-
 Flask <br>
 Flask Login <br>
 Flask WTF <br>
 flask-sqlalchemy <br>
-mysqlclient
-Flask-Migrate
+mysqlclient <br>
+Flask-Migrate <br>
 
 `pip install flask flask-sqlalchemy flask-login`
 
@@ -41,7 +38,7 @@ sudo apt install -y python-mysqldb
 
 ### Running UP DB interactions - 
 Log onto python interpreter one level above project directory (make sure pymsql is there)
-`from images_webapp import db, create_app, models`
-`db.create_all(app=create_app())`
-`db.drop_all(app=create_app())`
+`from images_webapp import db, create_app, models` <br>
+`db.create_all(app=create_app())` <br>
+`db.drop_all(app=create_app())` <br>
 
