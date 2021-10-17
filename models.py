@@ -13,8 +13,9 @@ class User(UserMixin, db.Model, Base):
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
     role = db.Column(db.String(100))
-    #Relationships
+    # Relationships
     images = relationship("Image")
+
 
 class Image(db.Model, Base):
     id = db.Column(db.Integer, primary_key=True)  # primary keys are required by SQLAlchemy

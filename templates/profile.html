@@ -2,8 +2,18 @@
 
 {% block content %}
 
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="message is-info has-text-left">
+      <div class="message-body has-text-left">
+        {{ messages[0] }}
+      </div>
+    </div>
+  {% endif %}
+{% endwith %}
+
 <div class="container is-max-desktop has-text-success-light is-size-1 is-capitalized">
-  Welcome, {{name}}
+  Welcome, {{name}}!
 </div>
 
 <div class="container is-max-desktop has-text-success-light is-size-5 mb-6 pb-6">
@@ -21,5 +31,21 @@
     <a href="{{ url_for('main.view_gallery') }}" class="button is-outlined is-large is-fullwidth">View Gallery</a>
   </div>
 </div>
+
+{% if role == 'admin' %}
+
+  <div class="container is-max-desktop">
+    <div class="notification is-primary">
+      <a href="{{ url_for('auth.add_user') }}" class="button is-outlined is-large is-fullwidth">Add User</a>
+    </div>
+  </div>
+
+  <div class="container is-max-desktop">
+    <div class="notification is-primary">
+      <a href="{{ url_for('auth.remove_user') }}" class="button is-outlined is-large is-fullwidth">Remove User</a>
+    </div>
+  </div>
+
+{% endif %}
 
 {% endblock %}
