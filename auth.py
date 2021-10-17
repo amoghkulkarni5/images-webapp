@@ -9,6 +9,10 @@ auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods=['GET'])
 def login():
+    if current_user.is_authenticated:
+        flash(f"You are already logged in as {current_user.name}!")
+        return render_template('profile.html', role=current_user.role)
+
     return render_template('login.html')
 
 
