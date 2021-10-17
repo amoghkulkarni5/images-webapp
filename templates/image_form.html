@@ -2,8 +2,15 @@
 
 {% block content %}
 
+<div class="container is-max-desktop has-text-success-light is-size-1 is-capitalized">
+  Upload Image
+</div>
+
+<div class="container is-max-desktop has-text-success-light is-size-5 mb-6 pb-6">
+  Drag & Drop or Use the button below.
+</div>
+
 <div class="column is-4 is-offset-4">
-  <h1>Upload new Image</h1>
     <div class="box">
       {% with messages = get_flashed_messages() %}
         {% if messages %}

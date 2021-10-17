@@ -2,10 +2,30 @@
 
 {% block content %}
 
+<div class="container is-max-desktop has-text-success-light is-size-1 is-capitalized">
+  Your Gallery
+</div>
+
+<div class="container">
     {% for filename in os.listdir(images_folder) %}
-        <div>
-            {{ filename }} <br>
-        </div>
+        <article class="media">
+          <figure class="media-left">
+            <p class="image is-100x100">
+              <img src="/static/uploads/{{current_user_name}}/thumbnails/{{filename}}">
+            </p>
+          </figure>
+          <div class="media-content ml-6">
+            <div class="content">
+              <p>
+                <strong>{{filename.split('.',1)[0]}}</strong>
+              </p>
+            </div>
+          </div>
+        </article>
     {% endfor %}
+</div>
 
 {% endblock %}
+
+
+

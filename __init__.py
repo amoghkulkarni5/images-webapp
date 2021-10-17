@@ -12,7 +12,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://amogh:amogh@localhost/flask_webapp'
     app.secret_key = 'SECRETKEY'
     app.config['SESSION_TYPE'] = 'filesystem'
-    app.config['UPLOAD_FOLDER'] = app.root_path + '/uploads'
+    app.config['UPLOAD_FOLDER'] = app.root_path + '/static/uploads'
     db.init_app(app)
 
     login_manager = LoginManager()

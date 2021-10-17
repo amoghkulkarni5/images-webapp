@@ -28,6 +28,7 @@ Flask WTF <br>
 flask-sqlalchemy <br>
 mysqlclient <br>
 Flask-Migrate <br>
+Pillow
 
 `pip install flask flask-sqlalchemy flask-login`
 

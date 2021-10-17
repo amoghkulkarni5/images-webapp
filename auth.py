@@ -67,6 +67,9 @@ def remove_user():
         obj = User.query.filter_by(id=uid).one()
         db.session.delete(obj)
         db.session.commit()
+
+        # TODO: Remove image folder
+
         flash('User successfully removed.')
         return render_template('profile.html', role=current_user.role)
 
