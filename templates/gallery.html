@@ -8,16 +8,18 @@
 
 <div class="container">
     {% for filename in os.listdir(images_folder) %}
-        <article class="media">
+        <article class="media is-hovered">
           <figure class="media-left">
-            <p class="image is-100x100">
-              <img src="/static/uploads/{{current_user_name}}/thumbnails/{{filename}}">
-            </p>
+              <a href="/images/{{filename}}">
+                <p class="image is-100x100">
+                  <img src="/static/uploads/{{current_user_name}}/thumbnails/{{filename}}">
+                </p>
+              </a>
           </figure>
           <div class="media-content ml-6">
             <div class="content">
               <p>
-                <strong>{{filename.split('.',1)[0]}}</strong>
+                <strong>{{filename.split('.',1)[0].split('_',1)[1]}}</strong>
               </p>
             </div>
           </div>

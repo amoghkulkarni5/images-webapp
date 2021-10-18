@@ -24,8 +24,6 @@ def login_post():
 
     # check if the user actually exists
     user = User.query.filter_by(email=email_id).first()
-    print("--- USER ---")
-    print(not user)
 
     if not user:
         flash('User not found.')
