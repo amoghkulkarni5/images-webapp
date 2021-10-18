@@ -48,7 +48,7 @@ def upload_file():
         transform_and_save(img, base_path, user_image.id)
 
         flash('File successfully uploaded.')
-        return render_template('profile.html')
+        return render_template('profile.html', name=current_user.name, role=current_user.role)
 
     return render_template('image_form.html')
 
@@ -66,11 +66,22 @@ def view_gallery():
 @login_required
 def view_image(image_uid):
     image_id = image_uid.split('.', 1)[0].split('_', 1)[0]
-    print(image_id)
-    return render_template('profile.html')
+
+    image = Image.query.filter_by(id=image_id).first()
+    if image is None:
+        flash("Selected Image does not exist anymore.")
+        return render_template('profile.html', name=current_user.name, role=current_user.role)
+
+    print(image.name)
+
+    image_paths = [f"/static/uploads/{current_user.name}/{image_id}/main/{image_id}_{image.name}",
+                   f"/static/uploads/{current_user.name}/{image_id}/blur/{image_id}_{image.name}",
+                   f"/static/uploads/{current_user.name}/{image_id}/shade/{image_id}_{image.name}",
+                   f"/static/uploads/{current_user.name}/{image_id}/spread/{image_id}_{image.name}"]
+    return render_template('view_image.html', image_paths=image_paths)
 
 
-# Helper Methods
+# ---------------------------  Helper Methods  --------------------------------
 def transform_and_save(image, base_path, image_id):
     # Save original Image
     main_image_folder = f"{base_path}/{current_user.name}/{image_id}/main/"
@@ -122,5 +133,3 @@ def spread_and_save(source_image_path, destination_folder, filename):
     with Wand_Image(filename=source_image_path) as img:
         img.spread(radius=8.0)
         img.save(filename=f"{destination_folder}{filename}")
-
-

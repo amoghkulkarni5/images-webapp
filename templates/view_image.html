@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="title is-2">
+  Image and its Transformations
+</h1>
+
+<section class="section">
+  {% for image_path in image_paths %}
+  <div class="box">
+    <figure class="image mt-6">
+      <img src="{{image_path}}">
+    </figure>
+  </div>
+  {% endfor %}
+</section>
+{% endblock %}
