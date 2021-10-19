@@ -4,6 +4,9 @@ from flask_login import login_user, logout_user, login_required, current_user
 from .models import User
 from flask_mail import Message
 from werkzeug.security import generate_password_hash, check_password_hash
+import string
+import random
+
 
 auth = Blueprint('auth', __name__)
 
@@ -108,9 +111,17 @@ def forgot_password():
             flash('User with given email does not exist')
             return render_template('forgot_password.html')
 
+        new_password = id_generator()
+        user.password = generate_password_hash(new_password, method='sha256')
+        db.session.commit()
         msg = Message('Password Recovery - Image Webapp', sender = 'images.webapp@gmail.com', recipients = [f"<{user.email}>"])
-        msg.body = f"Hi, <br> your password is {user.password}. Kindly change your password when you login again and delete this message. <br> Thanks!"
+        msg.body = f"Hi, <br> your new password is {new_password}. Kindly change your password when you login again and delete this message. <br> Thanks!"
         mail.send(msg)
         return render_template('sent_recovery_email.html')
 
     return render_template('forgot_password.html')
+
+#---------------Helper Functions-----------------------
+
+def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
