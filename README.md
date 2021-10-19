@@ -30,6 +30,7 @@ mysqlclient <br>
 Flask-Migrate <br>
 Pillow
 wand
+Flask-Mail
 
 `pip install flask flask-sqlalchemy flask-login`
 

@@ -1,11 +1,12 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
 import os
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
-
+mail = Mail()
 
 def create_app():
     app = Flask(__name__)
@@ -13,7 +14,18 @@ def create_app():
     app.secret_key = 'SECRETKEY'
     app.config['SESSION_TYPE'] = 'filesystem'
     app.config['UPLOAD_FOLDER'] = app.root_path + '/static/uploads'
+
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USERNAME'] = 'images.webapp@gmail.com'
+    app.config['MAIL_PASSWORD'] = 'images.webapp@1'
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_USE_SSL'] = True
+    app.config['MAIL_DEBUG'] = True
+    app.config['MAIL_SUPPRESS_SEND'] = False
+
     db.init_app(app)
+    mail.init_app(app)
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'

@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
-from . import db
+from . import db, mail
 from flask_login import login_user, logout_user, login_required, current_user
 from .models import User
-
+from flask_mail import Message
 
 auth = Blueprint('auth', __name__)
 
@@ -77,3 +77,22 @@ def remove_user():
 
     users = User.query.filter_by(role='user')
     return render_template('remove_user.html', users=users)
+
+
+@auth.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email_id = request.form.get('email')
+
+        # check if the user actually exists
+        user = User.query.filter_by(email=email_id).first()
+        if not user:
+            flash('User with given email does not exist')
+            return render_template('forgot_password.html')
+
+        msg = Message('[Password Recovery] - Image Webapp', sender = 'images_webapp@gmail.com', recipients = [email_id])
+        msg.body = f"Hi, <br> your password is {user.password}. Kindly change your password when you login again and delete this message. <br> Thanks!"
+        mail.send(msg)
+        return render_template('sent_recovery_email.html')
+
+    return render_template('forgot_password.html')

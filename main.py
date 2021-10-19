@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, jsonify
 import os
 import PIL.Image as PIL_Image
 from wand.image import Image as Wand_Image
 from flask_login import login_required, current_user
 from .models import User, Image
 from . import db
+import urllib.request
 
 main = Blueprint('main', __name__)
 
@@ -19,19 +20,27 @@ def index():
 def profile():
     return render_template('profile.html', name=current_user.name, role=current_user.role)
 
-
+global img
 @main.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_file():
     if request.method == 'POST':
-        if 'image_file' not in request.files:
-            flash('No image selected.')
+        if request.form.get('url') != '':
+            print('Image URL present')
+            img_url = request.form.get('url')
+            name = img_url.split('/')[-1]
+            urllib.request.urlretrieve(img_url, name)
+            img = PIL_Image.open(name)
+        elif 'image_file' in request.files:
+            img = request.files['image_file']
+        else:
+            flash('Please enter file or url.')
             return render_template('image_form.html')
 
-        img = request.files['image_file']
         filename = img.filename
+        print(filename)
         if filename.rsplit('.', 1)[1] != 'jpg':
-            flash('Please upload jpg image.')
+            flash('Please select jpg image.')
             return render_template('image_form.html')
 
         # TODO: DO NOT ALLOW UNDERSCORES IN FILENAME
@@ -49,6 +58,7 @@ def upload_file():
 
         flash('File successfully uploaded.')
         return render_template('profile.html', name=current_user.name, role=current_user.role)
+
 
     return render_template('image_form.html')
 
@@ -72,8 +82,6 @@ def view_image(image_uid):
         flash("Selected Image does not exist anymore.")
         return render_template('profile.html', name=current_user.name, role=current_user.role)
 
-    print(image.name)
-
     image_paths = [f"/static/uploads/{current_user.name}/{image_id}/main/{image_id}_{image.name}",
                    f"/static/uploads/{current_user.name}/{image_id}/blur/{image_id}_{image.name}",
                    f"/static/uploads/{current_user.name}/{image_id}/shade/{image_id}_{image.name}",
@@ -81,8 +89,97 @@ def view_image(image_uid):
     return render_template('view_image.html', image_paths=image_paths)
 
 
+# --------------------------- external APIs -----------------------------------
+@main.route('/api/register', methods=['POST'])
+def api_register_user():
+    name = request.values.get('username')
+    password = request.values.get('password')
+
+    email = f"{name}@images-webapp.com"
+    try:
+        new_user = User(name=name, email=email, password=password, role='user')
+        db.session.add(new_user)
+        db.session.commit()
+    except Exception as err:
+        db.session.rollback()
+        db.session.flush()
+        return jsonify(
+            success=False,
+            error=jsonify(
+                code=400,
+                message=err
+            )
+        )
+
+    return jsonify(
+        success='true'
+    )
+
+
+@main.route('/api/upload', methods=['POST'])
+def api_upload_image():
+
+    username = request.values.get('username')
+    password = request.values.get('password')
+
+    user = User.query.filter_by(name=username).first()
+
+    if not user:
+        return jsonify(
+            success=False,
+            error=jsonify(
+                code=400,
+                message='User not found.'
+            )
+        )
+    elif user.password != password:
+        return jsonify(
+            success=False,
+            error=jsonify(
+                code=400,
+                message='Incorrect Credentials.'
+            )
+        )
+    elif 'file' not in request.files:
+        return jsonify(
+            success=False,
+            error=jsonify(
+                code=400,
+                message='No image present'
+            )
+        )
+
+    img = request.files['file']
+    filename = img.filename
+    if filename.rsplit('.', 1)[1] != 'jpg':
+        return jsonify(
+            success=False,
+            error=jsonify(
+                code=400,
+                message='Please upload jpg image'
+            )
+        )
+
+    # TODO: DO NOT ALLOW UNDERSCORES IN FILENAME
+
+    # Store image metadata in database table
+    user_image = Image(user_id=user.id, name=filename)
+    db.session.add(user_image)
+    db.session.commit()
+
+    # Create unique path
+    base_path = os.path.join(f"{current_app.config.get('UPLOAD_FOLDER')}")
+
+    # Perform image transformations and save transformed images (and thumbnail)
+    transform_and_save(img, base_path, user_image.id, user)
+
+    return jsonify(
+        success='true'
+    )
+
+
 # ---------------------------  Helper Methods  --------------------------------
-def transform_and_save(image, base_path, image_id):
+def transform_and_save(image, base_path, image_id, current_user=current_user):
     # Save original Image
     main_image_folder = f"{base_path}/{current_user.name}/{image_id}/main/"
     os.makedirs(main_image_folder, exist_ok=True)
