@@ -3,6 +3,7 @@ from . import db, mail
 from flask_login import login_user, logout_user, login_required, current_user
 from .models import User
 from flask_mail import Message
+from werkzeug.security import generate_password_hash, check_password_hash
 
 auth = Blueprint('auth', __name__)
 
@@ -29,7 +30,7 @@ def login_post():
         flash('User not found.')
         return redirect(url_for('auth.login'))
 
-    if user.password != password:
+    if not check_password_hash(user.password, password):
         flash('Incorrect Credentials.')
         return redirect(url_for('auth.login'))
 
@@ -43,6 +44,23 @@ def logout():
     logout_user()
     return redirect(url_for('main.index'))
 
+@auth.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    if request.method == 'POST':
+        old_password = request.form.get('old_password')
+        new_password = request.form.get('new_password')
+
+        if check_password_hash(current_user.password, old_password):
+            current_user.password = generate_password_hash(new_password, method='sha256')
+            db.session.commit()
+            flash('Password Successfully Updated')
+            return render_template('profile.html')
+        else:
+            flash('Incorrect password provided')
+            return render_template('change_password.html')
+
+    return render_template('change_password.html')
 
 @auth.route('/add-user', methods=['GET', 'POST'])
 def add_user():
@@ -51,7 +69,7 @@ def add_user():
         email = request.form.get('email')
         password = request.form.get('password')
 
-        new_user = User(name=name, email=email, password=password, role='user')
+        new_user = User(name=name, email=email, password=generate_password_hash(password, method='sha256'), role='user')
         db.session.add(new_user)
         db.session.commit()
 
@@ -90,7 +108,7 @@ def forgot_password():
             flash('User with given email does not exist')
             return render_template('forgot_password.html')
 
-        msg = Message('[Password Recovery] - Image Webapp', sender = 'images_webapp@gmail.com', recipients = [email_id])
+        msg = Message('Password Recovery - Image Webapp', sender = 'images.webapp@gmail.com', recipients = [f"<{user.email}>"])
         msg.body = f"Hi, <br> your password is {user.password}. Kindly change your password when you login again and delete this message. <br> Thanks!"
         mail.send(msg)
         return render_template('sent_recovery_email.html')

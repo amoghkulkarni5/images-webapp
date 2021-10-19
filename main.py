@@ -6,6 +6,7 @@ from flask_login import login_required, current_user
 from .models import User, Image
 from . import db
 import urllib.request
+from werkzeug.security import generate_password_hash, check_password_hash
 
 main = Blueprint('main', __name__)
 
@@ -26,7 +27,6 @@ global img
 def upload_file():
     if request.method == 'POST':
         if request.form.get('url') != '':
-            print('Image URL present')
             img_url = request.form.get('url')
             name = img_url.split('/')[-1]
             urllib.request.urlretrieve(img_url, name)
@@ -38,8 +38,7 @@ def upload_file():
             return render_template('image_form.html')
 
         filename = img.filename
-        print(filename)
-        if filename.rsplit('.', 1)[1] != 'jpg':
+        if filename.rsplit('.', 1)[1] not in ['jpg','png']:
             flash('Please select jpg image.')
             return render_template('image_form.html')
 
@@ -95,9 +94,18 @@ def api_register_user():
     name = request.values.get('username')
     password = request.values.get('password')
 
+    if name == '' or password == '':
+        return jsonify(
+            success=False,
+            error=jsonify(
+                code=400,
+                message="Enter username and password"
+            )
+        )
+
     email = f"{name}@images-webapp.com"
     try:
-        new_user = User(name=name, email=email, password=password, role='user')
+        new_user = User(name=name, email=email, password=generate_password_hash(password, method='sha256'), role='user')
         db.session.add(new_user)
         db.session.commit()
     except Exception as err:
@@ -132,7 +140,7 @@ def api_upload_image():
                 message='User not found.'
             )
         )
-    elif user.password != password:
+    elif check_password_hash(user.password, password):
         return jsonify(
             success=False,
             error=jsonify(
@@ -151,7 +159,7 @@ def api_upload_image():
 
     img = request.files['file']
     filename = img.filename
-    if filename.rsplit('.', 1)[1] != 'jpg':
+    if filename.rsplit('.', 1)[1] not in ['jpg','png']:
         return jsonify(
             success=False,
             error=jsonify(

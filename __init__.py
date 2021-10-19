@@ -15,17 +15,14 @@ def create_app():
     app.config['SESSION_TYPE'] = 'filesystem'
     app.config['UPLOAD_FOLDER'] = app.root_path + '/static/uploads'
 
-    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_SERVER']: "smtp.gmail.com"
+    app.config['MAIL_PORT']: 465
     app.config['MAIL_USERNAME'] = 'images.webapp@gmail.com'
     app.config['MAIL_PASSWORD'] = 'images.webapp@1'
     app.config['MAIL_USE_TLS'] = False
     app.config['MAIL_USE_SSL'] = True
     app.config['MAIL_DEBUG'] = True
     app.config['MAIL_SUPPRESS_SEND'] = False
-
-    db.init_app(app)
-    mail.init_app(app)
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
@@ -49,5 +46,8 @@ def create_app():
     @app.context_processor
     def handle_context():
         return dict(os=os)
+
+    db.init_app(app)
+    mail.init_app(app)
 
     return app
