@@ -15,8 +15,8 @@ def create_app():
     app.config['SESSION_TYPE'] = 'filesystem'
     app.config['UPLOAD_FOLDER'] = app.root_path + '/static/uploads'
 
-    app.config['MAIL_SERVER']: "smtp.gmail.com"
-    app.config['MAIL_PORT']: 465
+    app.config['MAIL_SERVER']= "smtp.gmail.com"
+    app.config['MAIL_PORT']= 465
     app.config['MAIL_USERNAME'] = 'images.webapp@gmail.com'
     app.config['MAIL_PASSWORD'] = 'images.webapp@1'
     app.config['MAIL_USE_TLS'] = False
